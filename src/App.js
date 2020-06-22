@@ -17,13 +17,20 @@ export default function App() {
 
   useEffect(() => {
     api.get('/repositories').then(response => {
-      console.log(response.data);
       setRepositories(response.data);
     });
   }, []);
 
   async function handleLikeRepository(id) {
-    // Implement "Like Repository" functionality
+    const response = await api.post(`/repositories/${id}/like`);
+
+    if (response.status === 200) {
+      const repositoryIndex = repositories.findIndex(repository => repository.id === id);
+      console.log(repositoryIndex);
+      
+      repositories[repositoryIndex].likes = response.data.likes;
+      setRepositories([... repositories]);
+    }
   }
 
   return (
@@ -55,7 +62,7 @@ export default function App() {
                   style={styles.likeText}
                   testID={`repository-likes-${repository.id}`}
                 >
-                  {repository.likes}
+                  {repository.likes} curtidas
                 </Text>
               </View>
 
